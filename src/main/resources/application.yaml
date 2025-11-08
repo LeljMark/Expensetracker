@@ -1,0 +1,21 @@
+spring:
+  datasource:
+    url: jdbc:h2:file:./data/expensetracker
+    driverClassName: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+  h2:
+    console:
+      enabled: true
+  security:
+    filter:
+      dispatcher-types: request,async,error # REMOVE LATER
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration  # DISABLES SECURITY - REMOVE LATER
+
+flyway:
+  locations: classpath:db/migration
