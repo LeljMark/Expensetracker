@@ -1,5 +1,6 @@
 package com.markoleljak.expensetracker.controller;
 
+import com.markoleljak.expensetracker.dto.LoginRequest;
 import com.markoleljak.expensetracker.dto.RegisterRequest;
 import com.markoleljak.expensetracker.service.AuthService;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,7 +20,14 @@ public class AuthController {
 
     @PostMapping("/register")
     public String register(@RequestBody RegisterRequest request) {
-        authService.register(request);
-        return "registration successful";
+
+        boolean success = authService.register(request);
+
+        return success ? "registration successful" : "failed - email already in use";
+    }
+
+    @PostMapping("/login")
+    public String login(@RequestBody LoginRequest request) {
+        return authService.login(request);
     }
 }

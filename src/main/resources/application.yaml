@@ -19,3 +19,8 @@ spring:
 
 flyway:
   locations: classpath:db/migration
+
+# JWT config - set a long random value in production (use env var or secret manager)
+jwt:
+  secret: change-me-to-a-long-random-secret-of-at-least-32-bytes
+  expiration-ms: 86400000  # 24h
