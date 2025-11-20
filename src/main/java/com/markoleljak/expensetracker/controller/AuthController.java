@@ -1,12 +1,16 @@
 package com.markoleljak.expensetracker.controller;
 
+import com.markoleljak.expensetracker.dto.AuthResponse;
 import com.markoleljak.expensetracker.dto.LoginRequest;
 import com.markoleljak.expensetracker.dto.RegisterRequest;
 import com.markoleljak.expensetracker.service.AuthService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
@@ -19,15 +23,13 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public String register(@RequestBody RegisterRequest request) {
-
-        boolean success = authService.register(request);
-
-        return success ? "registration successful" : "failed - email already in use";
+    public ResponseEntity<Map<String, String>> register(@RequestBody RegisterRequest request) {
+        authService.register(request);
+        return ResponseEntity.ok(Map.of("message", "Registration successful. Please login."));
     }
 
     @PostMapping("/login")
-    public String login(@RequestBody LoginRequest request) {
-        return authService.login(request);
+    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
+        return ResponseEntity.ok(authService.login(request));
     }
 }

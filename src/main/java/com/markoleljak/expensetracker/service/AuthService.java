@@ -1,10 +1,15 @@
 package com.markoleljak.expensetracker.service;
 
+import com.markoleljak.expensetracker.dto.AuthResponse;
 import com.markoleljak.expensetracker.dto.LoginRequest;
 import com.markoleljak.expensetracker.dto.RegisterRequest;
+import com.markoleljak.expensetracker.exception.EmailAlreadyUsedException;
 import com.markoleljak.expensetracker.model.User;
 import com.markoleljak.expensetracker.repository.UserRepository;
-import com.markoleljak.expensetracker.security.JwtService;
+import com.markoleljak.expensetracker.security.JwtUtil;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -14,18 +19,21 @@ import java.time.Instant;
 public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtService jwtService;
+    private final AuthenticationManager authenticationManager;
+    private final JwtUtil jwtUtil;
 
-    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService) {
+    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder,
+                       JwtUtil jwtUtil, AuthenticationManager authenticationManager) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-        this.jwtService = jwtService;
+        this.authenticationManager = authenticationManager;
+        this.jwtUtil = jwtUtil;
 
     }
 
-    public boolean register(RegisterRequest request) {
+    public void register(RegisterRequest request) {
         if (userRepository.findByEmail(request.email()).isPresent()) {
-            return false;
+            throw new EmailAlreadyUsedException("Email already registered!");
         }
 
         User user = new User();
@@ -34,13 +42,18 @@ public class AuthService {
         user.setCreatedAt(Instant.now());
 
         userRepository.save(user);
-
-        return true;
     }
 
-    public String login(LoginRequest request) {
-        return null;
+    public AuthResponse login(LoginRequest request) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        request.email(),
+                        request.password()
+                )
+        );
 
-        // TODO
+        String jwt = jwtUtil.generateToken(request.email());
+
+        return new AuthResponse(jwt, request.email());
     }
 }
