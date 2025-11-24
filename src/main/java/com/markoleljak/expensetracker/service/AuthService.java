@@ -40,7 +40,6 @@ public class AuthService {
         user.setEmail(request.email());
         user.setPasswordHash(passwordEncoder.encode(request.password()));
         user.setCreatedAt(Instant.now());
-
         userRepository.save(user);
     }
 
