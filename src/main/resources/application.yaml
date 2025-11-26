@@ -11,11 +11,11 @@ spring:
   h2:
     console:
       enabled: true
-  security:
-    filter:
-      dispatcher-types: request,async,error # REMOVE LATER
-  autoconfigure:
-    exclude: org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration  # DISABLES SECURITY - REMOVE LATER
+  #security:
+    #filter:
+      #dispatcher-types: request,async,error # REMOVE LATER
+  #autoconfigure:
+    #exclude: org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration  # DISABLES SECURITY - REMOVE LATER
 
 flyway:
   locations: classpath:db/migration

@@ -4,6 +4,7 @@ import com.markoleljak.expensetracker.dto.AuthResponse;
 import com.markoleljak.expensetracker.dto.LoginRequest;
 import com.markoleljak.expensetracker.dto.RegisterRequest;
 import com.markoleljak.expensetracker.exception.EmailAlreadyUsedException;
+import com.markoleljak.expensetracker.exception.EmailNotFoundException;
 import com.markoleljak.expensetracker.model.User;
 import com.markoleljak.expensetracker.repository.UserRepository;
 import com.markoleljak.expensetracker.security.JwtUtil;
@@ -33,7 +34,7 @@ public class AuthService {
 
     public void register(RegisterRequest request) {
         if (userRepository.findByEmail(request.email()).isPresent()) {
-            throw new EmailAlreadyUsedException("Email already registered!");
+            throw new EmailAlreadyUsedException("Email already registered: " + request.email());
         }
 
         User user = new User();
@@ -44,7 +45,8 @@ public class AuthService {
     }
 
     public AuthResponse login(LoginRequest request) {
-        Authentication authentication = authenticationManager.authenticate(
+
+        authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.email(),
                         request.password()
