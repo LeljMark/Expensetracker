@@ -24,3 +24,6 @@ flyway:
 jwt:
   secret: change-me-to-a-long-random-secret-of-at-least-32-bytes
   expiration-ms: 86400000  # 24h
+
+
+# TODO logging?

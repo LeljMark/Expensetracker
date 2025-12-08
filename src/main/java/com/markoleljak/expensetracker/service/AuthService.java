@@ -4,13 +4,11 @@ import com.markoleljak.expensetracker.dto.AuthResponse;
 import com.markoleljak.expensetracker.dto.LoginRequest;
 import com.markoleljak.expensetracker.dto.RegisterRequest;
 import com.markoleljak.expensetracker.exception.EmailAlreadyUsedException;
-import com.markoleljak.expensetracker.exception.EmailNotFoundException;
 import com.markoleljak.expensetracker.model.User;
 import com.markoleljak.expensetracker.repository.UserRepository;
 import com.markoleljak.expensetracker.security.JwtUtil;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
