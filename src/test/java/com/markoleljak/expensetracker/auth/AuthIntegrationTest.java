@@ -1,5 +1,6 @@
 package com.markoleljak.expensetracker.auth;
 
+import com.markoleljak.expensetracker.dto.LoginResponse;
 import com.markoleljak.expensetracker.dto.LoginRequest;
 import com.markoleljak.expensetracker.dto.RegisterRequest;
 import org.junit.jupiter.api.DisplayName;
@@ -8,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
@@ -74,14 +77,17 @@ public class AuthIntegrationTest {
         // Login
         LoginRequest login = new LoginRequest("login@test.com", "abc12345");
 
-        ResponseEntity<String> response = rest.postForEntity(
+        ResponseEntity<LoginResponse> response = rest.postForEntity(
                 url("/auth/login"),
                 login,
-                String.class
+                LoginResponse.class
         );
 
+        LoginResponse body = response.getBody();
+
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody()).contains("token");
+        assertThat(body.getToken()).isNotNull();
+        assertThat(body.getToken()).isNotEmpty();
     }
 
     @Test
@@ -95,6 +101,21 @@ public class AuthIntegrationTest {
         // Wrong password
         LoginRequest login = new LoginRequest("password@test.com", "WRONG");
 
+        ResponseEntity<LoginResponse> response = rest.postForEntity(
+                url("/auth/login"),
+                login,
+                LoginResponse.class
+        );
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+    }
+
+    @Test
+    @DisplayName("Login with non-existent email -> 401")
+    void testLoginUnknownEmail() {
+
+        LoginRequest login = new LoginRequest("ghostEmail@test.com", "password42523");
+
         ResponseEntity<String> response = rest.postForEntity(
                 url("/auth/login"),
                 login,
@@ -105,14 +126,77 @@ public class AuthIntegrationTest {
     }
 
     @Test
-    @DisplayName("Login with non-existent email → 401")
-    void testLoginUnknownEmail() {
+    @DisplayName("Access protected endpoint with valid token -> 200")
+    void testProtectedEndpointAuthorized() {
 
-        LoginRequest login = new LoginRequest("ghostEmail@test.com", "password42523");
+        // register
+        RegisterRequest registerRequest = new RegisterRequest("protectedTestEmail@test.com", "pass47282");
+        rest.postForEntity(url("/auth/register"), registerRequest, String.class);
 
-        ResponseEntity<String> response = rest.postForEntity(
+        // login
+        String token = loginAndGetToken("protectedTestEmail@test.com", "pass47282");
+
+        HttpHeaders headers = new org.springframework.http.HttpHeaders();
+        headers.setBearerAuth(token);
+
+        HttpEntity entity = new org.springframework.http.HttpEntity<>(headers);
+
+        // call protected endpoint
+        ResponseEntity<String> response = rest.exchange(
+                url("/api/test/protected"),
+                org.springframework.http.HttpMethod.GET,
+                entity,
+                String.class
+        );
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).contains("protected endpoint ok");
+    }
+
+    private String loginAndGetToken(String email, String password) {
+        LoginRequest loginRequest = new LoginRequest(email, password);
+
+        ResponseEntity<LoginResponse> response = rest.postForEntity(
                 url("/auth/login"),
-                login,
+                loginRequest,
+                LoginResponse.class
+        );
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        LoginResponse body = response.getBody();
+
+        assertThat(body.getToken()).isNotNull();
+        assertThat(body.getToken()).isNotEmpty();
+
+        return body.getToken();
+    }
+
+    @Test
+    @DisplayName("Access protected endpoint without token → 401")
+    void testProtectedEndpointNoToken() {
+
+        ResponseEntity<String> response = rest.getForEntity(
+                url("/api/test/protected"),
+                String.class
+        );
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+    }
+
+    @Test
+    @DisplayName("Access protected endpoint with invalid token → 401")
+    void testProtectedEndpointInvalidToken() {
+
+        HttpHeaders headers = new org.springframework.http.HttpHeaders();
+        headers.set("Authorization", "Bearer invalid.token");
+
+        HttpEntity entity = new org.springframework.http.HttpEntity<>(headers);
+
+        ResponseEntity<String> response = rest.exchange(
+                url("/api/test/protected"),
+                org.springframework.http.HttpMethod.GET,
+                entity,
                 String.class
         );
 

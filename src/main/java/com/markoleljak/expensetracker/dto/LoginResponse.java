@@ -3,12 +3,12 @@ package com.markoleljak.expensetracker.dto;
 import lombok.Getter;
 
 @Getter
-public class AuthResponse {
+public class LoginResponse {
 
     private String token;
     private String email;
 
-    public AuthResponse(String token, String email) {
+    public LoginResponse(String token, String email) {
         this.token = token;
         this.email = email;
     }

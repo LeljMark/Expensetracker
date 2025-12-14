@@ -1,6 +1,6 @@
 package com.markoleljak.expensetracker.controller;
 
-import com.markoleljak.expensetracker.dto.AuthResponse;
+import com.markoleljak.expensetracker.dto.LoginResponse;
 import com.markoleljak.expensetracker.dto.LoginRequest;
 import com.markoleljak.expensetracker.dto.RegisterRequest;
 import com.markoleljak.expensetracker.service.AuthService;
@@ -29,8 +29,8 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
-        AuthResponse authResponse = authService.login(request);
-        return ResponseEntity.ok(authResponse);
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
+        LoginResponse loginResponse = authService.login(request);
+        return ResponseEntity.ok(loginResponse);
     }
 }

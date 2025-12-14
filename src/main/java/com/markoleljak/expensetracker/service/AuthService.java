@@ -1,6 +1,6 @@
 package com.markoleljak.expensetracker.service;
 
-import com.markoleljak.expensetracker.dto.AuthResponse;
+import com.markoleljak.expensetracker.dto.LoginResponse;
 import com.markoleljak.expensetracker.dto.LoginRequest;
 import com.markoleljak.expensetracker.dto.RegisterRequest;
 import com.markoleljak.expensetracker.exception.EmailAlreadyUsedException;
@@ -42,7 +42,7 @@ public class AuthService {
         userRepository.save(user);
     }
 
-    public AuthResponse login(LoginRequest request) {
+    public LoginResponse login(LoginRequest request) {
 
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -53,6 +53,6 @@ public class AuthService {
 
         String jwt = jwtUtil.generateToken(request.email());
 
-        return new AuthResponse(jwt, request.email());
+        return new LoginResponse(jwt, request.email());
     }
 }
