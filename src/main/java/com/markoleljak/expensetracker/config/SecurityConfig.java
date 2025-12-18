@@ -33,9 +33,13 @@ public class SecurityConfig {
 
         httpSecurity
                 .csrf(csrf -> csrf.disable())
+                .headers(headers -> headers
+                        .frameOptions(frame -> frame.sameOrigin())
+                )
                 .exceptionHandling(e -> e.authenticationEntryPoint(authEntryPoint))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**", "/h2-console/**", "/v3/api-docs/**", "/swagger-ui/**").permitAll()
+                        .requestMatchers("/auth/**", "/h2-console/**", "/h2-console", "/v3/api-docs/**",
+                                "/swagger-ui/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

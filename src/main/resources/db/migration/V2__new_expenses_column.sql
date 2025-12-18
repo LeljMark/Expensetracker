@@ -1,0 +1,2 @@
+ALTER TABLE expenses
+ADD COLUMN created_at TIMESTAMP NOT NULL;

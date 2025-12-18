@@ -11,14 +11,15 @@ spring:
   h2:
     console:
       enabled: true
-  #security:
-    #filter:
-      #dispatcher-types: request,async,error # REMOVE LATER
-  #autoconfigure:
-    #exclude: org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration  # DISABLES SECURITY - REMOVE LATER
+      path: /h2-console
+      settings:
+        web-allow-others: false
 
 flyway:
+  url: jdbc:h2:file:./data/expensetracker
   locations: classpath:db/migration
+  username: sa
+  password:
 
 # JWT config - set a long random value in production (use env var or secret manager)
 jwt:
@@ -27,3 +28,5 @@ jwt:
 
 
 # TODO logging?
+
+# TODO not add username and password to git?

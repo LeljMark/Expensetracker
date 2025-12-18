@@ -30,7 +30,6 @@ public class JwtUtil {
                 .compact();
     }
 
-    // TODO: If token invalid, parsing will throw; in your code you either catch elsewhere or ensure you call isTokenValid first.
     public String extractEmail(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(key)
