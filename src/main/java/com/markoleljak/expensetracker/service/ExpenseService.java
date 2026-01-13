@@ -10,6 +10,7 @@ import com.markoleljak.expensetracker.repository.ExpenseRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.List;
 
 @Service
 public class ExpenseService {
@@ -36,7 +37,12 @@ public class ExpenseService {
         expense.setDate(request.date());
         expense.setCreatedAt(Instant.now());
 
+        // TODO what does this return and how?
         return expenseRepository.save(expense);
+    }
+
+    public List<Expense> getExpensesForUser(User user) {
+        return expenseRepository.findByUserOrderByDateDesc(user);
     }
 
 }

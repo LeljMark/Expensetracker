@@ -46,6 +46,17 @@ public class GlobalExceptionHandler {
                 );
     }
 
+    @ExceptionHandler({CategoryNotFoundException.class})
+    public ResponseEntity<?> handleCategoryNotFound(CategoryNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponse(
+                        LocalDateTime.now(),
+                        HttpStatus.BAD_REQUEST.value(),
+                        "Category not found.",
+                        ex.getMessage())
+                );
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleGenericException(Exception ex) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

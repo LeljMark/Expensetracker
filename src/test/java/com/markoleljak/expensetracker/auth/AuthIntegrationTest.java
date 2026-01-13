@@ -1,5 +1,6 @@
 package com.markoleljak.expensetracker.auth;
 
+import com.markoleljak.expensetracker.TestUtil;
 import com.markoleljak.expensetracker.dto.LoginResponse;
 import com.markoleljak.expensetracker.dto.LoginRequest;
 import com.markoleljak.expensetracker.dto.RegisterRequest;
@@ -53,7 +54,11 @@ public class AuthIntegrationTest {
         RegisterRequest req = new RegisterRequest("email12345@example.com", "password123");
 
         // First registration should pass
-        rest.postForEntity(url("/auth/register"), req, String.class);
+        rest.postForEntity(
+                url("/auth/register"),
+                req,
+                String.class
+        );
 
         // Second registration should fail
         ResponseEntity<String> response = rest.postForEntity(
@@ -72,7 +77,11 @@ public class AuthIntegrationTest {
 
         // Register first
         RegisterRequest register = new RegisterRequest("login@test.com", "abc12345");
-        rest.postForEntity(url("/auth/register"), register, String.class);
+        rest.postForEntity(
+                url("/auth/register"),
+                register,
+                String.class
+        );
 
         // Login
         LoginRequest login = new LoginRequest("login@test.com", "abc12345");
@@ -96,7 +105,11 @@ public class AuthIntegrationTest {
 
         // Register first
         RegisterRequest register = new RegisterRequest("password@test.com", "correct");
-        rest.postForEntity(url("/auth/register"), register, String.class);
+        rest.postForEntity(
+                url("/auth/register"),
+                register,
+                String.class
+        );
 
         // Wrong password
         LoginRequest login = new LoginRequest("password@test.com", "WRONG");
@@ -129,12 +142,9 @@ public class AuthIntegrationTest {
     @DisplayName("Access protected endpoint with valid token -> 200")
     void testProtectedEndpointAuthorized() {
 
-        // register
-        RegisterRequest registerRequest = new RegisterRequest("protectedTestEmail@test.com", "pass47282");
-        rest.postForEntity(url("/auth/register"), registerRequest, String.class);
+        TestUtil testUtil = new TestUtil(rest, port);
 
-        // login
-        String token = loginAndGetToken("protectedTestEmail@test.com", "pass47282");
+        String token = testUtil.RegisterLoginAndGetToken("protectedTestEmail@test.com", "pass47282");
 
         HttpHeaders headers = new org.springframework.http.HttpHeaders();
         headers.setBearerAuth(token);
@@ -151,25 +161,6 @@ public class AuthIntegrationTest {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).contains("protected endpoint ok");
-    }
-
-    private String loginAndGetToken(String email, String password) {
-        LoginRequest loginRequest = new LoginRequest(email, password);
-
-        ResponseEntity<LoginResponse> response = rest.postForEntity(
-                url("/auth/login"),
-                loginRequest,
-                LoginResponse.class
-        );
-
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-
-        LoginResponse body = response.getBody();
-
-        assertThat(body.getToken()).isNotNull();
-        assertThat(body.getToken()).isNotEmpty();
-
-        return body.getToken();
     }
 
     @Test
