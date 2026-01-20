@@ -9,10 +9,9 @@ import com.markoleljak.expensetracker.service.ExpenseService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -30,10 +29,7 @@ public class ExpenseController {
     @PostMapping("/create")
     public ResponseEntity<ExpenseResponse> createExpense(
             @Valid @RequestBody CreateExpenseRequest request,
-            @AuthenticationPrincipal UserDetails userDetails) {
-
-        User user = userRepository.findByEmail(userDetails.getUsername())
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+            @AuthenticationPrincipal User user) {
 
         Expense expense = expenseService.createExpense(user, request);
 
@@ -44,20 +40,16 @@ public class ExpenseController {
                 expense.getDescription()
         );
 
-        return ResponseEntity.ok(response); // TODO ?
+        return ResponseEntity.ok(response); // equivalent to: new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @GetMapping("/user/all")
-    public List<ExpenseResponse> getUserExpenses(@AuthenticationPrincipal UserDetails userDetails) {
-        // TODO
-        //  there isn't really a need to fetch the user - we are fetching expenses of the user
-        //  who is currently logged in, and all of his information should be in the @AuthenticationPrincipal
-        //  but I'm not sure if it will work because the UserDetails is Spring's object - maybe configure
-        //  my own @AuthenticationPrincipal that corresponds (or is the same) as the User entity?
-        User user = userRepository.findByEmail(userDetails.getUsername())
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-
-        return expenseService.getExpensesForUser(user)
+    public List<ExpenseResponse> getUserExpenses(
+            @AuthenticationPrincipal User user,
+            @RequestParam(required = false) LocalDate dateFrom,
+            @RequestParam(required = false) LocalDate dateUntil
+    ) {
+        return expenseService.getExpensesForUser(user, dateFrom, dateUntil)
                 .stream()
                 .map(expense -> new ExpenseResponse(
                         expense.getAmount(),

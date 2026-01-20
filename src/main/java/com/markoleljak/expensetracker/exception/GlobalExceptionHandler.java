@@ -57,6 +57,17 @@ public class GlobalExceptionHandler {
                 );
     }
 
+    @ExceptionHandler({InvalidDatesException.class})
+    public ResponseEntity<?> handleInvalidDates(InvalidDatesException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponse(
+                        LocalDateTime.now(),
+                        HttpStatus.BAD_REQUEST.value(),
+                        "Invalid dates in the request.",
+                        ex.getMessage())
+                );
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleGenericException(Exception ex) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

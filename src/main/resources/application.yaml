@@ -26,7 +26,16 @@ jwt:
   secret: change-me-to-a-long-random-secret-of-at-least-32-bytes
   expiration-ms: 86400000  # 24h
 
+logging:
+  level:
+    root: INFO
+    com.markoleljak.expensetracker: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n"
+  file:
+    name: logs/application.log
 
-# TODO logging?
+# TODO add logging inside the app
+
 
 # TODO not add username and password to git?
