@@ -2,12 +2,14 @@ spring:
   datasource:
     url: jdbc:h2:file:./data/expensetracker
     driverClassName: org.h2.Driver
-    username: sa
-    password:
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
   jpa:
     hibernate:
       ddl-auto: validate
-    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
   h2:
     console:
       enabled: true
@@ -16,15 +18,11 @@ spring:
         web-allow-others: false
 
 flyway:
-  url: jdbc:h2:file:./data/expensetracker
   locations: classpath:db/migration
-  username: sa
-  password:
 
-# JWT config - set a long random value in production (use env var or secret manager)
 jwt:
-  secret: change-me-to-a-long-random-secret-of-at-least-32-bytes
-  expiration-ms: 86400000  # 24h
+  secret: ${JWT_SECRET}
+  expiration-ms: 3600000
 
 logging:
   level:
@@ -35,7 +33,4 @@ logging:
   file:
     name: logs/application.log
 
-# TODO add logging inside the app
 
-
-# TODO not add username and password to git?

@@ -1,7 +1,6 @@
 package com.markoleljak.expensetracker.security;
 
 import com.markoleljak.expensetracker.repository.UserRepository;
-import com.markoleljak.expensetracker.model.User;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

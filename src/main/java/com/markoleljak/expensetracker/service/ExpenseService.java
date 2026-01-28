@@ -8,12 +8,14 @@ import com.markoleljak.expensetracker.model.Expense;
 import com.markoleljak.expensetracker.model.User;
 import com.markoleljak.expensetracker.repository.CategoryRepository;
 import com.markoleljak.expensetracker.repository.ExpenseRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 
+@Slf4j
 @Service
 public class ExpenseService {
     private final ExpenseRepository expenseRepository;
@@ -25,6 +27,10 @@ public class ExpenseService {
     }
 
     public Expense createExpense(User user, CreateExpenseRequest request) {
+        log.info("Creating expense for user. ");
+        log.info("user email: " + user.getEmail());
+        log.info("expense request: " + request);
+
         Category category = categoryRepository
                 .findByName(request.category())
                 .orElseThrow(() ->
@@ -43,6 +49,10 @@ public class ExpenseService {
     }
 
     public List<Expense> getExpensesForUser(User user, LocalDate dateFrom, LocalDate dateUntil) {
+        log.info("Fetching expenses for user.");
+        log.info("user email: " + user.getEmail());
+        log.info("date from: " + dateFrom + ", date until: " + dateUntil);
+
         if (dateFrom != null && dateUntil != null) {
             if (dateFrom.isAfter(dateUntil)) {
                 throw new InvalidDatesException("dateFrom cannot be after dateUntil!");
