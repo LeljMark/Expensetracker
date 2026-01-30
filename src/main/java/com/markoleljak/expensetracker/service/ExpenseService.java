@@ -3,6 +3,7 @@ package com.markoleljak.expensetracker.service;
 import com.markoleljak.expensetracker.dto.CreateExpenseRequest;
 import com.markoleljak.expensetracker.exception.CategoryNotFoundException;
 import com.markoleljak.expensetracker.exception.InvalidDatesException;
+import com.markoleljak.expensetracker.exception.ResourceNotFoundException;
 import com.markoleljak.expensetracker.model.Category;
 import com.markoleljak.expensetracker.model.Expense;
 import com.markoleljak.expensetracker.model.User;
@@ -27,15 +28,15 @@ public class ExpenseService {
     }
 
     public Expense createExpense(User user, CreateExpenseRequest request) {
-        log.info("Creating expense for user. ");
-        log.info("user email: " + user.getEmail());
-        log.info("expense request: " + request);
+        log.info("Creating expense for userId={}", user.getId());
+        log.debug("CreateExpenseRequest={}", request);
 
         Category category = categoryRepository
                 .findByName(request.category())
-                .orElseThrow(() ->
-                        new CategoryNotFoundException(request.category())
-                );
+                .orElseThrow(() -> {
+                            log.warn("Category not found: {}", request.category());
+                            return new ResourceNotFoundException("Category not found.");
+                });
 
         Expense expense = new Expense();
         expense.setUser(user);
@@ -45,25 +46,46 @@ public class ExpenseService {
         expense.setDate(request.date());
         expense.setCreatedAt(Instant.now());
 
-        return expenseRepository.save(expense);
+        Expense savedExpense = expenseRepository.save(expense);
+        log.info("Expense created with id={} for userId={}", savedExpense.getId(), user.getId());
+
+        return savedExpense;
     }
 
     public List<Expense> getExpensesForUser(User user, LocalDate dateFrom, LocalDate dateUntil) {
-        log.info("Fetching expenses for user.");
-        log.info("user email: " + user.getEmail());
-        log.info("date from: " + dateFrom + ", date until: " + dateUntil);
+        log.info("Fetching expenses for userId={}", user.getId());
+        log.debug("Filters: dateFrom={}, dateUntil={}", dateFrom, dateUntil);
 
+        List<Expense> fetchedExpenses;
         if (dateFrom != null && dateUntil != null) {
             if (dateFrom.isAfter(dateUntil)) {
+                log.warn("Invalid date range: dateFrom={} dateUntil={}", dateFrom, dateUntil);
                 throw new InvalidDatesException("dateFrom cannot be after dateUntil!");
             }
-            return expenseRepository.findByUserAndDateBetweenOrderByDateDesc(user, dateFrom, dateUntil);
+            fetchedExpenses = expenseRepository.findByUserAndDateBetweenOrderByDateDesc(user, dateFrom, dateUntil);
         } else if (dateFrom != null) {
-            return expenseRepository.findByUserAndAfterDateOrderByDateDesc(user, dateFrom);
+            fetchedExpenses = expenseRepository.findByUserAndAfterDateOrderByDateDesc(user, dateFrom);
         } else if (dateUntil != null) {
-            return expenseRepository.findByUserAndBeforeDateOrderByDateDesc(user, dateUntil);
+            fetchedExpenses = expenseRepository.findByUserAndBeforeDateOrderByDateDesc(user, dateUntil);
         } else {
-            return expenseRepository.findByUserOrderByDateDesc(user);
+            fetchedExpenses = expenseRepository.findByUserOrderByDateDesc(user);
         }
+
+        log.info("Fetched expenses={}", fetchedExpenses);
+        return fetchedExpenses;
+    }
+
+    public void deleteExpense(Long expenseId, Long userId) {
+        log.info("Deleting expense id={} for userId={}", expenseId, userId);
+
+        Expense expense = expenseRepository
+                .findByIdAndUserId(expenseId, userId)
+                .orElseThrow(() -> {
+                    log.warn("Expense not found: id={} userId={}", expenseId, userId);
+                    return new ResourceNotFoundException("Expense not found.");
+                });
+
+        expenseRepository.delete(expense);
+        log.info("Expense deleted id={}", expenseId);
     }
 }

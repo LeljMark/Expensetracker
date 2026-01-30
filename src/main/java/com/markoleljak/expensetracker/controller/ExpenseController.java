@@ -7,6 +7,7 @@ import com.markoleljak.expensetracker.model.User;
 import com.markoleljak.expensetracker.repository.UserRepository;
 import com.markoleljak.expensetracker.service.ExpenseService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +27,7 @@ public class ExpenseController {
         this.userRepository = userRepository;
     }
 
-    @PostMapping("/create")
+    @PostMapping
     public ResponseEntity<ExpenseResponse> createExpense(
             @Valid @RequestBody CreateExpenseRequest request,
             @AuthenticationPrincipal User user) {
@@ -40,10 +41,10 @@ public class ExpenseController {
                 expense.getDescription()
         );
 
-        return ResponseEntity.ok(response); // equivalent to: new ResponseEntity<>(user, HttpStatus.OK);
+        return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/user/all")
+    @GetMapping
     public List<ExpenseResponse> getUserExpenses(
             @AuthenticationPrincipal User user,
             @RequestParam(required = false) LocalDate dateFrom,
@@ -57,5 +58,11 @@ public class ExpenseController {
                         expense.getCategory().getName(),
                         expense.getDescription()
                 )).toList();
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteExpense(@PathVariable Long id, @AuthenticationPrincipal User user) {
+        expenseService.deleteExpense(id, user.getId());
     }
 }

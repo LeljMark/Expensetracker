@@ -46,17 +46,6 @@ public class GlobalExceptionHandler {
                 );
     }
 
-    @ExceptionHandler({CategoryNotFoundException.class})
-    public ResponseEntity<?> handleCategoryNotFound(CategoryNotFoundException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new ErrorResponse(
-                        LocalDateTime.now(),
-                        HttpStatus.BAD_REQUEST.value(),
-                        "Category not found.",
-                        ex.getMessage())
-                );
-    }
-
     @ExceptionHandler({InvalidDatesException.class})
     public ResponseEntity<?> handleInvalidDates(InvalidDatesException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -75,6 +64,17 @@ public class GlobalExceptionHandler {
                         LocalDateTime.now(),
                         HttpStatus.INTERNAL_SERVER_ERROR.value(),
                         "Internal server error.",
+                        ex.getMessage())
+                );
+    }
+
+    @ExceptionHandler({ResourceNotFoundException.class})
+    public ResponseEntity<?> handleNotFound(ResourceNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ErrorResponse(
+                        LocalDateTime.now(),
+                        HttpStatus.NOT_FOUND.value(),
+                        "Not found.",
                         ex.getMessage())
                 );
     }

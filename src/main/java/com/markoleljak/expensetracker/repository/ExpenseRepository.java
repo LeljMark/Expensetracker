@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 public interface ExpenseRepository extends JpaRepository<Expense, Long> {
 
@@ -25,7 +26,5 @@ public interface ExpenseRepository extends JpaRepository<Expense, Long> {
     @Query("SELECT e FROM Expense e WHERE e.user = :user AND e.date <= :end ORDER BY e.date DESC")
     List<Expense> findByUserAndBeforeDateOrderByDateDesc(@Param("user") User user, @Param("end") LocalDate end);
 
-    List<Expense> findByUserAndCategory(User user, Category category);
-
-
+    Optional<Expense> findByIdAndUserId(Long id, Long userId);
 }

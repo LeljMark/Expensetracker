@@ -36,4 +36,9 @@ public class Expense {
     private Instant createdAt;
 
     private String description;
+
+    public String toString() {
+        return String.format("[user=%s, amount=%s, date=%s, category=%s, description=%s]",
+                user.getEmail(), amount, date, category.getName(), description);
+    }
 }
