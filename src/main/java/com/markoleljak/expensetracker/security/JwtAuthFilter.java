@@ -42,7 +42,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         String token = authHeader.substring(7);
         if (!jwtUtil.isTokenValid(token)) {
-            log.warn("Invalid JWT token for request {}", path);
             throw new BadCredentialsException("Invalid JWT token");
         }
 

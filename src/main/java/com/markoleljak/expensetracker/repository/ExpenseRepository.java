@@ -1,6 +1,5 @@
 package com.markoleljak.expensetracker.repository;
 
-import com.markoleljak.expensetracker.model.Category;
 import com.markoleljak.expensetracker.model.Expense;
 import com.markoleljak.expensetracker.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;

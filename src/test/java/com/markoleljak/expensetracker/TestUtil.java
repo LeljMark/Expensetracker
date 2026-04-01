@@ -1,14 +1,18 @@
 package com.markoleljak.expensetracker;
 
-import com.markoleljak.expensetracker.dto.LoginRequest;
-import com.markoleljak.expensetracker.dto.LoginResponse;
-import com.markoleljak.expensetracker.dto.RegisterRequest;
+import com.markoleljak.expensetracker.dto.*;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * TODO
+ * Utility class for integration tests. Provides methods for common test operations like registering, logging in, and creating expenses.
  */
 public class TestUtil {
 
@@ -46,5 +50,26 @@ public class TestUtil {
         assertThat(body.getToken()).isNotEmpty();
 
         return body.getToken();
+    }
+
+    public ResponseEntity<ExpenseResponse> createExpense(String token, BigDecimal amount, LocalDate date, String category) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(token);
+
+        CreateExpenseRequest request = new CreateExpenseRequest(
+                amount,
+                date,
+                category,
+                "Test"
+        );
+
+        HttpEntity<CreateExpenseRequest> entity = new HttpEntity<>(request, headers);
+        ResponseEntity<ExpenseResponse> response = rest.postForEntity(
+                "/api/expenses",
+                entity,
+                ExpenseResponse.class
+        );
+
+        return response;
     }
 }

@@ -16,3 +16,6 @@ logging:
     root: WARN
     org.springframework.security: DEBUG
 
+jwt:
+  secret: some-test-secret-value-that-is-long-enough
+  expiration-ms: 3600000

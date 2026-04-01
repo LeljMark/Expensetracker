@@ -1,14 +1,18 @@
 package com.markoleljak.expensetracker.security;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
 
+@Slf4j
 @Service
 public class JwtUtil {
 
@@ -43,7 +47,14 @@ public class JwtUtil {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
+        } catch (ExpiredJwtException e) {
+            log.warn("Token expired.");
+            return false;
+        } catch (SignatureException e) {
+            log.warn("Invalid token signature");
+            return false;
         } catch (Exception e) {
+            log.warn("Invalid token: {}", e.getMessage());
             return false;
         }
     }

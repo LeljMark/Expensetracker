@@ -76,7 +76,7 @@ public class AuthIntegrationTest {
     void testLoginSuccess() {
 
         // Register first
-        RegisterRequest register = new RegisterRequest("login@test.com", "abc12345");
+        RegisterRequest register = new RegisterRequest("login1@test.com", "abc12345");
         rest.postForEntity(
                 url("/auth/register"),
                 register,
@@ -84,7 +84,7 @@ public class AuthIntegrationTest {
         );
 
         // Login
-        LoginRequest login = new LoginRequest("login@test.com", "abc12345");
+        LoginRequest login = new LoginRequest("login1@test.com", "abc12345");
 
         ResponseEntity<LoginResponse> response = rest.postForEntity(
                 url("/auth/login"),

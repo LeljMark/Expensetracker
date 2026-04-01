@@ -1,7 +1,6 @@
 package com.markoleljak.expensetracker.service;
 
 import com.markoleljak.expensetracker.dto.CreateExpenseRequest;
-import com.markoleljak.expensetracker.exception.CategoryNotFoundException;
 import com.markoleljak.expensetracker.exception.InvalidDatesException;
 import com.markoleljak.expensetracker.exception.ResourceNotFoundException;
 import com.markoleljak.expensetracker.model.Category;
