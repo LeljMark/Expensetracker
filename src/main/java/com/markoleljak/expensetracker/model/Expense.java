@@ -8,6 +8,10 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
 
+/**
+ * Expense entity representing an expense record in the application. Contains details about the user, category, amount,
+ * date, and description of the expense.
+ */
 @Entity
 @Table(name = "expenses")
 @Getter

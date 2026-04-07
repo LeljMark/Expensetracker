@@ -10,6 +10,9 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Repository interface for managing Expense entities. Provides methods to retrieve expenses based on user and date criteria.
+ */
 public interface ExpenseRepository extends JpaRepository<Expense, Long> {
 
     List<Expense> findByUserOrderByDateDesc(User user);

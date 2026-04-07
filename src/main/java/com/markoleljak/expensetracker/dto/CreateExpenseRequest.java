@@ -5,6 +5,13 @@ import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+/**
+ * DTO for creating a new expense. Contains validation annotations to ensure that the input data is valid before processing.
+ * @param amount
+ * @param date
+ * @param category
+ * @param description
+ */
 public record CreateExpenseRequest(
 
         @NotNull

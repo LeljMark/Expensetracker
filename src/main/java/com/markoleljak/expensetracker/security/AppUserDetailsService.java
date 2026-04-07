@@ -8,6 +8,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+/**
+ * Custom UserDetailsService implementation that loads user details from the database using UserRepository.
+ */
 @Slf4j
 @Service
 public class AppUserDetailsService implements UserDetailsService {

@@ -15,7 +15,9 @@ import org.springframework.security.web.SecurityFilterChain;
 
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-
+/**
+ * Configuration class for Spring Security. It sets up the security filter chain, authentication manager, and password encoder.
+ */
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {

@@ -11,6 +11,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.time.LocalDateTime;
 
+/**
+ * Global exception handler for the application. Catches and handles various exceptions thrown by services,
+ * returning appropriate HTTP status codes and error messages in a consistent format.
+ */
 @ControllerAdvice
 public class GlobalExceptionHandler {
 

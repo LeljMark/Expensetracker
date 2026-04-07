@@ -8,13 +8,18 @@ import com.markoleljak.expensetracker.model.Expense;
 import com.markoleljak.expensetracker.model.User;
 import com.markoleljak.expensetracker.repository.CategoryRepository;
 import com.markoleljak.expensetracker.repository.ExpenseRepository;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 
+/**
+ * Service for handling business logic related to expenses, including creating, fetching, and deleting expenses.
+ */
 @Slf4j
 @Service
 public class ExpenseService {
@@ -26,7 +31,8 @@ public class ExpenseService {
         this.categoryRepository = categoryRepository;
     }
 
-    public Expense createExpense(User user, CreateExpenseRequest request) {
+    @Transactional
+    public Expense createExpense(@Valid User user, @Valid CreateExpenseRequest request) {
         log.info("Creating expense for userId={}", user.getId());
         log.debug("CreateExpenseRequest={}", request);
 
@@ -51,6 +57,7 @@ public class ExpenseService {
         return savedExpense;
     }
 
+    @Transactional(readOnly = true)
     public List<Expense> getExpensesForUser(User user, LocalDate dateFrom, LocalDate dateUntil) {
         log.info("Fetching expenses for userId={}", user.getId());
         log.debug("Filters: dateFrom={}, dateUntil={}", dateFrom, dateUntil);
@@ -70,10 +77,11 @@ public class ExpenseService {
             fetchedExpenses = expenseRepository.findByUserOrderByDateDesc(user);
         }
 
-        log.info("Fetched expenses={}", fetchedExpenses);
+        log.info("Fetched {} expenses", fetchedExpenses.size());
         return fetchedExpenses;
     }
 
+    @Transactional
     public void deleteExpense(Long expenseId, Long userId) {
         log.info("Deleting expense id={} for userId={}", expenseId, userId);
 

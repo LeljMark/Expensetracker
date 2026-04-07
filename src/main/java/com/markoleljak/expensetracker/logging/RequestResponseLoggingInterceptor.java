@@ -7,6 +7,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+/**
+ * Logs incoming HTTP requests and outgoing HTTP responses for debugging and monitoring purposes.
+ */
 @Component
 public class RequestResponseLoggingInterceptor implements HandlerInterceptor {
 

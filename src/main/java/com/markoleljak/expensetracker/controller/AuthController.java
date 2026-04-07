@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
+/**
+ * Controller for handling user authentication (registration and login).
+ */
 @RestController
 @RequestMapping("/auth")
 public class AuthController {

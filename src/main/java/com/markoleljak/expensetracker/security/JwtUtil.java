@@ -12,6 +12,9 @@ import org.springframework.stereotype.Service;
 import javax.crypto.SecretKey;
 import java.util.Date;
 
+/**
+ * Utility class for generating and validating JWT tokens.
+ */
 @Slf4j
 @Service
 public class JwtUtil {

@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.List;
 
+/**
+ * Controller for managing user expenses. Provides endpoints to create, retrieve, and delete expenses.
+ */
 @RestController
 @RequestMapping("/api/expenses")
 public class ExpenseController {

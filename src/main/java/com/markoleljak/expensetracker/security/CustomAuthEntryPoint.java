@@ -10,6 +10,9 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
+/**
+ * Custom AuthenticationEntryPoint that handles unauthorized access attempts by returning a JSON response with error details.
+ */
 @Slf4j
 @Component
 public class CustomAuthEntryPoint implements AuthenticationEntryPoint {

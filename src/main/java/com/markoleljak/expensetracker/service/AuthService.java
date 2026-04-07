@@ -7,14 +7,19 @@ import com.markoleljak.expensetracker.exception.EmailAlreadyUsedException;
 import com.markoleljak.expensetracker.model.User;
 import com.markoleljak.expensetracker.repository.UserRepository;
 import com.markoleljak.expensetracker.security.JwtUtil;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 
+/**
+ * Service for handling user authentication logic, including registration and login.
+ */
 @Slf4j
 @Service
 public class AuthService {
@@ -32,7 +37,8 @@ public class AuthService {
 
     }
 
-    public void register(RegisterRequest request) {
+    @Transactional
+    public void register(@Valid RegisterRequest request) {
         log.info("Registration attempt for email={}", request.email());
 
         if (userRepository.findByEmail(request.email()).isPresent()) {
@@ -49,7 +55,8 @@ public class AuthService {
         log.info("User registered successfully email={}", request.email());
     }
 
-    public LoginResponse login(LoginRequest request) {
+    @Transactional
+    public LoginResponse login(@Valid LoginRequest request) {
         log.info("Login attempt for email={}", request.email());
 
         try {

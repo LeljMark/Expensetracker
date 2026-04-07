@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * Category entity representing an expense category in the application. Contains a unique name for the category.
+ */
 @Entity
 @Table(name = "categories")
 @Getter
