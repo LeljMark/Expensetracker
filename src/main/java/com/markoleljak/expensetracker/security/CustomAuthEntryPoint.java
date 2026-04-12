@@ -7,6 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
+import java.util.Map;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 
@@ -16,28 +18,33 @@ import java.io.IOException;
 @Slf4j
 @Component
 public class CustomAuthEntryPoint implements AuthenticationEntryPoint {
+
+    private final ObjectMapper objectMapper;
+
+    public CustomAuthEntryPoint(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
+
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException)
             throws IOException, ServletException {
 
         log.warn(
-                "Unauthorized access attempt to {} - reason={}",
+                "Unauthorized access attempt to {} from {} - reason={}",
                 request.getRequestURI(),
+                request.getRemoteAddr(),
                 authException.getClass().getSimpleName()
         );
 
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType("application/json");
 
-        String errorMessage = "Unauthorized.";
+        Map<String, String> body = Map.of(
+                "error", authException.getClass().getSimpleName(),
+                "message", "Unauthorized."
+        );
 
-        String json = """
-                {
-                    "error": "%s",
-                    "message": "%s"
-                }
-                """.formatted(authException.getClass().getSimpleName(), errorMessage);
-
-        response.getWriter().write(json);
+        response.getWriter().write(objectMapper.writeValueAsString(body));
+        response.getWriter().flush();
     }
 }

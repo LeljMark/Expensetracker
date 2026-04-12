@@ -1,7 +1,7 @@
 spring:
   datasource:
     url: jdbc:h2:file:./data/expensetracker
-    driverClassName: org.h2.Driver
+    driver-class-name: org.h2.Driver
     username: ${DB_USER}
     password: ${DB_PASSWORD}
   jpa:
@@ -16,9 +16,8 @@ spring:
       path: /h2-console
       settings:
         web-allow-others: false
-
-flyway:
-  locations: classpath:db/migration
+  flyway:
+    locations: classpath:db/migration
 
 jwt:
   secret: ${JWT_SECRET}
